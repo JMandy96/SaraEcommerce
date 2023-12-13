@@ -43,7 +43,7 @@ export default function StoreSwitcher({
             <Button
                 size="sm"
                 role="combobox"
-                aria-expande={open}
+                aria-expanded={open}
                 aria-label="Select a store"
                 className={cn("w-[200px] justify-between", className)}
                 style={{backgroundColor: "rgba(25, 20, 30)", color:"#b3ea11"}}
