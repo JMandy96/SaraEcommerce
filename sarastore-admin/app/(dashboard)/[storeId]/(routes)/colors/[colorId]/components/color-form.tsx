@@ -23,9 +23,10 @@ import ImageUpload from "@/components/ui/image-upload";
 
 const formSchema = z.object({
     name: z.string().min(1),
-    value: z.string().min(4).regex(/^#/, {
+    value: z.string().min(1).regex(/^#/, {
         message: 'String Must be a valid hex code'
     }),
+    hexValue: z.string().optional()
 });
 
 
@@ -44,6 +45,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({
 
     const [ open, setOpen ] = useState(false);
     const [ loading, setloading ] = useState(false);
+    const [value, setValue] = useState('');
 
     const title = initialData ? "Edit Color" : "Create Color";
     const description = initialData ? "Edit a Color" : "Create Color";
@@ -54,9 +56,22 @@ export const ColorForm: React.FC<ColorFormProps> = ({
         resolver: zodResolver(formSchema),
         defaultValues: initialData || {
             name: '',
-            value: ''
+            value: '',
+            hexValue: '',
         }
     });
+    
+    const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const hexColor = event.target.value;
+        form.setValue('value', hexColor); // Update 'value' field
+        form.setValue('hexValue', hexColor); // Update hex value field
+    };
+
+    const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const hexColor = event.target.value;
+        form.setValue('hexValue', hexColor); // Update hex value field
+    };
+
 
     const onSubmit = async (data: ColorFormValues) => {
         try {
@@ -128,6 +143,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({
                                 <FormLabel>Color</FormLabel>
                                 <FormControl>
                                     <Input disabled={loading} placeholder="Color Name" {...field} />
+                                    
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -141,10 +157,12 @@ export const ColorForm: React.FC<ColorFormProps> = ({
                                 <FormLabel>Value</FormLabel>
                                 <FormControl>
                                     <div className="flex items-center gap-x-4">
-                                        <Input disabled={loading} placeholder={field.value} {...field} className="border p-4 rounded-full"/>
-                                        <div 
-                                            className="border p-4 rounded-full"
-                                            style={{ backgroundColor: field.value }}
+                                        {/* <Input disabled={loading} placeholder="Color value" {...field} type="color" onChange={handleColorChange}/> */}
+                                        <Input disabled={loading} {...field}
+                                            onChange={(e) => {
+                                            field.onChange(e); // Keep the original onChange functionality
+                                            handleValueChange(e); // Additional logic to handle the change
+                                        }} 
                                         />
                                     </div>
                                 </FormControl>
@@ -152,6 +170,22 @@ export const ColorForm: React.FC<ColorFormProps> = ({
                             </FormItem>
                         )}
                         />
+
+                    <FormField 
+                        control={form.control}
+                        name="hexValue"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Hex Value</FormLabel>
+                                <FormControl>
+                                    {/* <Input disabled={loading} {...field} /> */}
+                                    <Input disabled={loading} {...field} type="color" placeholder={value} onChange={handleColorChange}/>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
                     </div>
                     <Button disabled={loading} className="ml-auto" type="submit">
                         {action}
