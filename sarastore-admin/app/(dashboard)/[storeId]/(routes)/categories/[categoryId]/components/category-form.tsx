@@ -134,7 +134,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                             </FormItem>
                         )}
                         />
-                                                <FormField 
+                        <FormField 
                         control={form.control}
                         name="billboardId"
                         render={({ field }) => (
